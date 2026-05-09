@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colles PTSI · Révisions</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+<style>
+  :root {
+    --paper: #f5f1e8;
+    --paper-dark: #ebe5d4;
+    --ink: #1a1814;
+    --ink-soft: #3a342a;
+    --accent-math: #8b1a1a;
+    --accent-phys: #1e4d8b;
+    --accent: var(--accent-math);
+    --rule: #c9bfa8;
+    --gold: #b08d3a;
+    --highlight: rgba(176, 141, 58, 0.15);
+  }
+
+  body[data-matiere="physique"] {
+    --accent: var(--accent-phys);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--paper);
+    background-image:
+      radial-gradient(ellipse at top, rgba(176, 141, 58, 0.04) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1, 0 0 0 0 0.08, 0 0 0 0 0.05, 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    min-height: 100vh;
+    transition: background 0.3s;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    border-bottom: 3px double var(--ink);
+    padding: 2.5rem 1.5rem 1.5rem;
+    text-align: center;
+    background: linear-gradient(180deg, var(--paper-dark) 0%, var(--paper) 100%);
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+    transition: color 0.3s;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-bottom: 0.4rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .subtitle {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .ornament {
+    text-align: center;
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin: 0.8rem 0;
+    letter-spacing: 0.5em;
+  }
+
+  /* ===== SELECTEURS (matière + semaine) ===== */
+  .selectors {
+    background: var(--paper-dark);
+    border-bottom: 1px solid var(--rule);
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    backdrop-filter: blur(8px);
+    background: rgba(235, 229, 212, 0.96);
+  }
+
+  .selectors-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: center;
+  }
+
+  .selector-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .selector-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-soft);
+    margin-right: 0.4rem;
+  }
+
+  .matiere-btn, .semaine-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .matiere-btn:hover, .semaine-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .matiere-btn.active {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+
+  .semaine-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .semaine-btn.recent::after {
+    content: ' •';
+    color: var(--gold);
+  }
+
+  /* ===== NAV interne ===== */
+  nav.section-nav {
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.6rem 1rem;
+  }
+
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  nav.section-nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  nav.section-nav a:hover {
+    color: var(--accent);
+    border-color: var(--rule);
+    background: var(--paper-dark);
+  }
+
+  /* ===== MAIN ===== */
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Conteneurs matière/semaine */
+  .matiere-content { display: none; }
+  .matiere-content.active { display: block; }
+
+  .semaine-content { display: none; }
+  .semaine-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 140px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    transition: color 0.3s;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    flex: 1;
+  }
+
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.6rem;
+    color: var(--ink);
+  }
+
+  h4 {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-style: italic;
+    margin: 1rem 0 0.4rem;
+    color: var(--accent);
+    transition: color 0.3s;
+  }
+
+  p { margin-bottom: 0.9rem; }
+  ul, ol { margin-bottom: 1rem; padding-left: 1.4rem; }
+  li { margin-bottom: 0.4rem; }
+  strong { font-weight: 700; color: var(--ink); }
+  em { color: var(--ink-soft); }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--paper-dark);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 1.2rem 1.4rem;
+    margin: 1rem 0;
+    border-radius: 2px;
+    transition: border-color 0.3s;
+  }
+
+  .card.theorem { border-left-color: var(--accent); }
+  .card.definition { border-left-color: var(--gold); }
+  .card.method { border-left-color: var(--accent); background: #f0e8d8; }
+  body[data-matiere="physique"] .card.method { background: #e8eef5; }
+  .card.warning { border-left-color: #8b1a1a; background: #f5e8e0; }
+  .card.formula { border-left-color: var(--gold); background: #f7f0d8; font-size: 1.05rem; }
+
+  .card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+    display: block;
+    transition: color 0.3s;
+  }
+
+  .card.definition .card-label { color: var(--gold); }
+  .card.formula .card-label { color: var(--gold); }
+
+  /* ===== DETAILS ===== */
+  details {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    margin: 0.8rem 0;
+    background: var(--paper-dark);
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+
+  details[open] {
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  summary {
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    font-weight: 600;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: var(--highlight); }
+
+  summary::before {
+    content: '§';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--accent);
+    font-weight: 700;
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  details[open] summary::before { transform: rotate(180deg); }
+
+  .preuve-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    background: var(--paper);
+    padding: 0.15rem 0.45rem;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    margin-right: 0.3rem;
+  }
+
+  .summary-text {
+    flex: 1;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.05rem;
+  }
+
+  .preuve-content {
+    padding: 0 1.4rem 1.2rem;
+    border-top: 1px dashed var(--rule);
+    padding-top: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .enonce {
+    font-style: italic;
+    background: var(--paper);
+    padding: 0.8rem 1rem;
+    border-left: 2px solid var(--gold);
+    margin-bottom: 1rem;
+    font-size: 0.98rem;
+  }
+
+  .enonce::before {
+    content: 'Énoncé. ';
+    font-weight: 700;
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .preuve-step {
+    margin: 0.7rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .preuve-step:hover { border-left-color: var(--accent); }
+
+  .qed {
+    text-align: right;
+    font-style: italic;
+    color: var(--accent);
+    margin-top: 0.8rem;
+  }
+
+  /* ===== EXOS ===== */
+  .exo {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 1.2rem 1.4rem;
+    margin: 1rem 0;
+  }
+
+  .exo-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .exo-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 0.15rem 0.45rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  /* ===== TABLEAU ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  th {
+    background: var(--paper-dark);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  /* ===== INTRO BLOCK ===== */
+  .intro {
+    background: var(--paper-dark);
+    border: 1px solid var(--rule);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .meta-item {
+    border-left: 2px solid var(--gold);
+    padding-left: 0.8rem;
+  }
+
+  .meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.2rem;
+    transition: color 0.3s;
+  }
+
+  .meta-value { font-size: 0.95rem; }
+
+  /* ===== PLACEHOLDER ===== */
+  .placeholder {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--paper-dark);
+    border: 2px dashed var(--rule);
+    border-radius: 4px;
+    margin: 2rem 0;
+  }
+
+  .placeholder h2 {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 0.8rem;
+  }
+
+  .placeholder p { color: var(--ink-soft); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    border-top: 3px double var(--ink);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    background: var(--paper-dark);
+  }
+
+  footer .ornament { margin-bottom: 0.6rem; }
+
+  .toggle-all {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .toggle-all:hover {
+    background: var(--accent);
+    color: var(--paper);
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    body { font-size: 17px; }
+    main { padding: 1.5rem 1rem 3rem; }
+    .section-header { flex-direction: column; gap: 0.2rem; align-items: flex-start; }
+    .nav-inner { justify-content: flex-start; }
+    .selectors { padding: 0.7rem; }
+    .matiere-btn, .semaine-btn { padding: 0.4rem 0.7rem; font-size: 0.7rem; }
+  }
+
+  @media print {
+    .selectors, nav.section-nav, footer { display: none; }
+    .matiere-content, .semaine-content { display: block !important; }
+    details { break-inside: avoid; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body data-matiere="maths">
+
+<header>
+  <div class="eyebrow">PTSI · Programme de colles · Révisions</div>
+  <h1>Carnet de <em>colles</em></h1>
+  <div class="ornament">⁂ ⁂ ⁂</div>
+  <p class="subtitle">Compilation hebdomadaire · cours, preuves de colle, exos types et méthodes.</p>
+</header>
+
+<!-- ============ SELECTEURS ============ -->
+<div class="selectors">
+  <div class="selectors-inner">
+    <div class="selector-row">
+      <span class="selector-label">Matière</span>
+      <button class="matiere-btn active" data-matiere="maths">Mathématiques</button>
+      <button class="matiere-btn" data-matiere="physique">Physique</button>
+    </div>
+    <div class="selector-row" id="semaines-row">
+      <span class="selector-label">Semaine</span>
+      <!-- Boutons semaines remplis dynamiquement -->
+    </div>
+  </div>
+</div>
+
+<!-- ============ NAV INTERNE ============ -->
+<nav class="section-nav">
+  <div class="nav-inner" id="section-nav-inner">
+    <!-- Liens remplis dynamiquement -->
+  </div>
+</nav>
+
+<main>
+
+<!-- ============================================== -->
+<!-- ============ MATIÈRE : MATHS ================ -->
+<!-- ============================================== -->
+<div class="matiere-content active" data-matiere="maths">
+
+  <!-- ============ SEMAINE DU 27 AVRIL ============ -->
+  <div class="semaine-content active" data-semaine="2026-04-27" data-matiere="maths" data-titre="Semaine du 27 avril">
+
+    <section id="programme">
+      <div class="section-header">
+        <span class="section-num">§ 0</span>
+        <h2>Programme · Applications linéaires & Séries</h2>
+      </div>
+
+      <div class="intro">
+        <p>Cette semaine, deux gros blocs : les <strong>applications linéaires</strong> (premier contact à fond) et les <strong>séries numériques</strong> (chapitre tout juste terminé). Le tout en s'appuyant fortement sur les <strong>dimensions des espaces vectoriels</strong> vues les semaines précédentes.</p>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Chapitre principal</span>
+            <span class="meta-value">Applications linéaires</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Chapitre secondaire</span>
+            <span class="meta-value">Séries numériques</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Prérequis lourd</span>
+            <span class="meta-value">Dimension des e.v., bases, théorème du rang</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Hors programme</span>
+            <span class="meta-value">Projecteurs, symétries, matrices d'AL, séries alternées, cv absolue</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Attention</span>
+        Les <strong>projecteurs et symétries</strong> n'ont pas encore été vus (ce sera lundi matin). Les <strong>matrices des applications linéaires</strong> ne sont pas non plus au programme.
+      </div>
+    </section>
+
+    <section id="cours-al">
+      <div class="section-header">
+        <span class="section-num">§ 1</span>
+        <h2>Cours · Applications linéaires</h2>
+      </div>
+
+      <h3>1.1 — Définition et premiers exemples</h3>
+
+      <div class="card definition">
+        <span class="card-label">Définition</span>
+        Soient $E$ et $F$ deux $\mathbb{K}$-espaces vectoriels. Une application $f : E \to F$ est dite <strong>linéaire</strong> si :
+        $$\forall (x,y) \in E^2,\ \forall \lambda \in \mathbb{K},\quad f(x + \lambda y) = f(x) + \lambda f(y).$$
+        On note $\mathcal{L}(E,F)$ l'ensemble des applications linéaires de $E$ dans $F$. Si $E = F$, on parle d'<em>endomorphisme</em>, et on note $\mathcal{L}(E)$.
+      </div>
+
+      <p><strong>Vocabulaire à connaître par cœur :</strong></p>
+      <ul>
+        <li><strong>Endomorphisme</strong> : $f \in \mathcal{L}(E)$.</li>
+        <li><strong>Isomorphisme</strong> : $f$ linéaire et bijective.</li>
+        <li><strong>Automorphisme</strong> : endomorphisme bijectif. On note $GL(E)$.</li>
+        <li><strong>Forme linéaire</strong> : $f \in \mathcal{L}(E, \mathbb{K})$.</li>
+      </ul>
+
+      <h4>Exemples canoniques</h4>
+      <ul>
+        <li>Application nulle, identité, homothétie de rapport $\lambda$.</li>
+        <li>Dérivation $D : P \mapsto P'$ sur $\mathbb{K}[X]$ ou sur $\mathcal{C}^\infty(\mathbb{R})$.</li>
+        <li>Intégration $f \mapsto \int_a^b f(t)\,\mathrm{d}t$ : forme linéaire sur $\mathcal{C}([a,b])$.</li>
+        <li>Évaluation $P \mapsto P(a)$ : forme linéaire sur $\mathbb{K}[X]$.</li>
+        <li>Multiplication matricielle $X \mapsto AX$ pour $A \in \mathcal{M}_{n,p}(\mathbb{K})$.</li>
+      </ul>
+
+      <h3>1.2 — Image et surjectivité</h3>
+
+      <div class="card definition">
+        <span class="card-label">Définition · Image</span>
+        $$\operatorname{Im}(f) = f(E) = \{f(x) \mid x \in E\} \subset F.$$
+      </div>
+
+      <div class="card theorem">
+        <span class="card-label">Théorème</span>
+        <ul>
+          <li>$\operatorname{Im}(f)$ est un <strong>sous-espace vectoriel</strong> de $F$.</li>
+          <li>$f$ est <strong>surjective</strong> $\iff \operatorname{Im}(f) = F$.</li>
+          <li><strong>Transfert d'une famille génératrice :</strong> si $(e_1, \dots, e_p)$ engendre $E$, alors $\bigl(f(e_1), \dots, f(e_p)\bigr)$ engendre $\operatorname{Im}(f)$.</li>
+        </ul>
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode pratique</span>
+        Pour <strong>déterminer $\operatorname{Im}(f)$</strong>, prendre une base $(e_1, \dots, e_n)$ de $E$, calculer les $f(e_i)$, puis $\operatorname{Im}(f) = \operatorname{Vect}\bigl(f(e_1), \dots, f(e_n)\bigr)$. Échelonner ensuite cette famille pour en extraire une base.
+      </div>
+
+      <h3>1.3 — Noyau et injectivité</h3>
+
+      <div class="card definition">
+        <span class="card-label">Définition · Noyau</span>
+        $$\ker(f) = f^{-1}(\{0_F\}) = \{x \in E \mid f(x) = 0_F\} \subset E.$$
+      </div>
+
+      <div class="card theorem">
+        <span class="card-label">Théorème fondamental</span>
+        <ul>
+          <li>$\ker(f)$ est un <strong>sous-espace vectoriel</strong> de $E$.</li>
+          <li>$f$ est <strong>injective</strong> $\iff \ker(f) = \{0_E\}$.</li>
+        </ul>
+      </div>
+
+      <h3>1.4 — Rang et théorème du rang</h3>
+
+      <div class="card definition">
+        <span class="card-label">Définition · Rang</span>
+        Si $\operatorname{Im}(f)$ est de dimension finie : $\operatorname{rg}(f) = \dim \operatorname{Im}(f).$
+      </div>
+
+      <div class="card theorem">
+        <span class="card-label">Théorème du rang ★</span>
+        Soit $f : E \to F$ linéaire avec $E$ de dimension finie. Alors :
+        $$\boxed{\dim E = \dim \ker(f) + \operatorname{rg}(f).}$$
+      </div>
+
+      <h3>1.5 — Le grand théorème de la dimension finie</h3>
+
+      <div class="card theorem">
+        <span class="card-label">Théorème · Équivalences en dim. finie</span>
+        Soit $f : E \to F$ linéaire avec $\dim E = \dim F$ <strong>finie</strong>. Alors :
+        $$f \text{ injective} \iff f \text{ surjective} \iff f \text{ bijective}.$$
+        <p style="margin-top:0.6rem">Arme la plus puissante du chapitre : prouver l'injectivité (souvent plus facile, on calcule $\ker(f)$) suffit à prouver la bijectivité.</p>
+      </div>
+
+      <div class="card theorem">
+        <span class="card-label">Caractérisations par les images de bases</span>
+        Soit $f : E \to F$ linéaire et $\mathcal{B} = (e_1, \dots, e_n)$ une base de $E$. Alors :
+        <ul style="margin-top:0.5rem">
+          <li>$f$ <strong>injective</strong> $\iff (f(e_1), \dots, f(e_n))$ est libre dans $F$.</li>
+          <li>$f$ <strong>surjective</strong> $\iff (f(e_1), \dots, f(e_n))$ est génératrice de $F$.</li>
+          <li>$f$ <strong>bijective</strong> $\iff (f(e_1), \dots, f(e_n))$ est une base de $F$.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="cours-series">
+      <div class="section-header">
+        <span class="section-num">§ 2</span>
+        <h2>Cours · Séries numériques</h2>
+      </div>
+
+      <h3>2.1 — Définitions</h3>
+
+      <div class="card definition">
+        <span class="card-label">Définition · Convergence</span>
+        Soit $(u_n)_{n \geq n_0}$ une suite réelle ou complexe. La <strong>somme partielle</strong> est $\displaystyle S_N = \sum_{k=n_0}^N u_k$. La série $\sum u_n$ <strong>converge</strong> si $(S_N)$ admet une limite finie. Dans ce cas :
+        $$\sum_{n=n_0}^{+\infty} u_n = \lim_{N \to +\infty} S_N.$$
+      </div>
+
+      <h3>2.2 — Critère nécessaire</h3>
+
+      <div class="card theorem">
+        <span class="card-label">Théorème</span>
+        Si $\sum u_n$ converge, alors $u_n \xrightarrow[n \to +\infty]{} 0$.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège classique</span>
+        Réciproque <strong>FAUSSE</strong>. Contre-exemple imparable : la série harmonique $\sum \frac{1}{n}$ diverge alors que $\frac{1}{n} \to 0$.
+        <p style="margin-top:0.4rem">Par contraposée, si $u_n \not\to 0$ (<strong>divergence grossière</strong>), alors $\sum u_n$ diverge — argument à utiliser sans hésiter.</p>
+      </div>
+
+      <h3>2.3 — Séries de référence</h3>
+
+      <table>
+        <thead>
+          <tr><th>Série</th><th>Nature</th><th>Somme (si CV)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Géométrique $\sum_{n \geq 0} q^n$</td><td>CV $\iff |q| < 1$</td><td>$\dfrac{1}{1-q}$</td></tr>
+          <tr><td>Riemann $\sum_{n \geq 1} \dfrac{1}{n^\alpha}$</td><td>CV $\iff \alpha > 1$</td><td>—</td></tr>
+          <tr><td>Harmonique $\sum_{n \geq 1} \dfrac{1}{n}$</td><td>Diverge</td><td>—</td></tr>
+          <tr><td>Exponentielle $\sum \dfrac{x^n}{n!}$</td><td>CV pour tout $x$</td><td>$e^x$</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.4 — Comparaison série–intégrale</h3>
+
+      <div class="card theorem">
+        <span class="card-label">Théorème</span>
+        Soit $f : [n_0, +\infty[ \to \mathbb{R}_+$ <strong>continue, positive et décroissante</strong>. Alors $\sum f(n)$ et $\int_{n_0}^{+\infty} f(t)\,\mathrm{d}t$ sont de <strong>même nature</strong>.
+      </div>
+
+      <h3>2.5 — Comparaison à termes positifs</h3>
+
+      <div class="card theorem">
+        <span class="card-label">Théorèmes de comparaison</span>
+        Soient $\sum u_n$ et $\sum v_n$ à termes <strong>positifs</strong>.
+        <ul style="margin-top:0.5rem">
+          <li>Si $u_n \leq v_n$ APCR : $\sum v_n$ CV $\Rightarrow$ $\sum u_n$ CV ; $\sum u_n$ DV $\Rightarrow$ $\sum v_n$ DV.</li>
+          <li>Si $u_n \sim v_n$, alors $\sum u_n$ et $\sum v_n$ sont de <strong>même nature</strong>.</li>
+          <li>Si $u_n = O(v_n)$ (ou $o(v_n)$) et $\sum v_n$ CV, alors $\sum u_n$ CV.</li>
+        </ul>
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Hors programme cette semaine</span>
+        Pas de <strong>séries alternées</strong>, pas de <strong>convergence absolue</strong>.
+      </div>
+    </section>
+
+    <section id="preuves">
+      <div class="section-header">
+        <span class="section-num">§ 3</span>
+        <h2>Preuves de cours exigibles</h2>
+      </div>
+
+      <p style="margin-bottom:1rem;font-style:italic;color:var(--ink-soft);">Le colleur peut demander une de ces démonstrations au choix. Les apprendre <strong>par cœur dans la structure</strong>, en comprenant chaque étape.</p>
+
+      <button class="toggle-all" onclick="toggleAll('preuves')">Tout déplier / replier</button>
+
+      <details>
+        <summary>
+          <span class="preuve-num">P.1</span>
+          <span class="summary-text">Si $f$ est un isomorphisme, alors $f^{-1}$ est aussi linéaire.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Soient $E, F$ deux $\mathbb{K}$-e.v. et $f : E \to F$ un isomorphisme. Alors $f^{-1} : F \to E$ est linéaire, donc isomorphisme.
+          </div>
+
+          <div class="preuve-step">
+            <strong>Idée :</strong> on transfère la linéarité de $f$ sur $f^{-1}$ via la bijectivité.
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 1.</strong> Soient $y_1, y_2 \in F$ et $\lambda \in \mathbb{K}$. Comme $f$ bijective, il existe $x_1, x_2 \in E$ uniques avec $y_1 = f(x_1)$, $y_2 = f(x_2)$, soit $x_i = f^{-1}(y_i)$.
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 2.</strong> Par linéarité de $f$ :
+            $$f(x_1 + \lambda x_2) = f(x_1) + \lambda f(x_2) = y_1 + \lambda y_2.$$
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 3.</strong> En appliquant $f^{-1}$ :
+            $$f^{-1}(y_1 + \lambda y_2) = x_1 + \lambda x_2 = f^{-1}(y_1) + \lambda f^{-1}(y_2).$$
+          </div>
+          <div class="preuve-step">
+            <strong>Conclusion.</strong> $f^{-1}$ est linéaire et bijective : c'est un isomorphisme.
+          </div>
+          <div class="qed">∎</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="preuve-num">P.2</span>
+          <span class="summary-text">Si $A$ est un s.e.v. de $E$, alors $f(A)$ est un s.e.v. de $F$.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Soient $f \in \mathcal{L}(E,F)$ et $A$ un s.e.v. de $E$. Alors $f(A) = \{f(x) \mid x \in A\}$ est un s.e.v. de $F$.
+          </div>
+
+          <div class="preuve-step">
+            <strong>(i) Contient $0_F$.</strong> $0_E \in A$ ; par linéarité $f(0_E) = 0_F$, donc $0_F \in f(A)$.
+          </div>
+          <div class="preuve-step">
+            <strong>(ii) Stabilité.</strong> Soient $y_1, y_2 \in f(A)$ et $\lambda \in \mathbb{K}$. Il existe $x_1, x_2 \in A$ avec $y_i = f(x_i)$.
+            $A$ s.e.v. $\Rightarrow x_1 + \lambda x_2 \in A$. Linéarité :
+            $$y_1 + \lambda y_2 = f(x_1 + \lambda x_2) \in f(A).$$
+          </div>
+          <div class="preuve-step">
+            <strong>Conclusion.</strong> $f(A)$ est un s.e.v. de $F$.
+          </div>
+          <div class="qed">∎</div>
+          <p style="margin-top:0.8rem;font-size:0.92rem;font-style:italic;">
+            <strong>Cas particulier :</strong> avec $A = E$, on retrouve que $\operatorname{Im}(f)$ est un s.e.v. de $F$.
+          </p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="preuve-num">P.3</span>
+          <span class="summary-text">$\ker(f)$ est un s.e.v. de $E$.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Soit $f \in \mathcal{L}(E,F)$. Alors $\ker(f)$ est un s.e.v. de $E$.
+          </div>
+
+          <div class="preuve-step">
+            <strong>(i) $0_E \in \ker(f)$.</strong> Par linéarité, $f(0_E) = 0_F$.
+          </div>
+          <div class="preuve-step">
+            <strong>(ii) Stabilité.</strong> Soient $x_1, x_2 \in \ker(f)$ et $\lambda \in \mathbb{K}$. Alors $f(x_1) = f(x_2) = 0_F$, et :
+            $$f(x_1 + \lambda x_2) = f(x_1) + \lambda f(x_2) = 0_F.$$
+            Donc $x_1 + \lambda x_2 \in \ker(f)$.
+          </div>
+          <div class="preuve-step">
+            <strong>Conclusion.</strong> $\ker(f)$ est un s.e.v. de $E$.
+          </div>
+          <div class="qed">∎</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="preuve-num">P.4</span>
+          <span class="summary-text">$f$ est injective $\iff \ker(f) = \{0_E\}$.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Soit $f \in \mathcal{L}(E,F)$. Alors $f$ est injective si et seulement si $\ker(f) = \{0_E\}$.
+          </div>
+
+          <div class="preuve-step">
+            <strong>(⇒)</strong> Supposons $f$ injective. Soit $x \in \ker(f)$ : $f(x) = 0_F = f(0_E)$. Par injectivité, $x = 0_E$. Donc $\ker(f) = \{0_E\}$.
+          </div>
+          <div class="preuve-step">
+            <strong>(⇐)</strong> Supposons $\ker(f) = \{0_E\}$. Soient $x_1, x_2 \in E$ avec $f(x_1) = f(x_2)$. Linéarité :
+            $$f(x_1 - x_2) = f(x_1) - f(x_2) = 0_F.$$
+            Donc $x_1 - x_2 \in \ker(f) = \{0_E\}$, soit $x_1 = x_2$. $f$ est injective.
+          </div>
+          <div class="qed">∎</div>
+          <p style="margin-top:0.8rem;font-size:0.92rem;font-style:italic;">
+            <strong>Astuce mnémonique :</strong> dans le sens (⇐), c'est le « <em>$f(a) = f(b) \Rightarrow f(a-b) = 0$</em> » qui transforme l'égalité en kernel.
+          </p>
+        </div>
+      </details>
+    </section>
+
+    <section id="exos">
+      <div class="section-header">
+        <span class="section-num">§ 4</span>
+        <h2>Exercices types</h2>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 1</span> Montrer qu'une application est linéaire</div>
+        <p><strong>Énoncé.</strong> Soit $f : \mathbb{R}^3 \to \mathbb{R}^2$, $f(x,y,z) = (x + 2y - z,\ 3x - y)$. Montrer que $f \in \mathcal{L}(\mathbb{R}^3, \mathbb{R}^2)$.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p>Soient $u = (x_1, y_1, z_1)$, $v = (x_2, y_2, z_2) \in \mathbb{R}^3$ et $\lambda \in \mathbb{R}$. Alors :</p>
+            $$f(u + \lambda v) = \bigl((x_1 + \lambda x_2) + 2(y_1 + \lambda y_2) - (z_1 + \lambda z_2),\ 3(x_1 + \lambda x_2) - (y_1 + \lambda y_2)\bigr)$$
+            $$= (x_1 + 2y_1 - z_1,\ 3x_1 - y_1) + \lambda(x_2 + 2y_2 - z_2,\ 3x_2 - y_2) = f(u) + \lambda f(v).$$
+            <p>$f$ est linéaire. ∎</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 2</span> Calcul $\ker$, $\operatorname{Im}$, $\operatorname{rg}$ (filouterie)</div>
+        <p><strong>Énoncé.</strong> Soit $f : \mathbb{R}^3 \to \mathbb{R}^3$, $f(x,y,z) = (x + y,\ y + z,\ x + z)$. Déterminer $\ker(f)$, $\operatorname{Im}(f)$, $\operatorname{rg}(f)$, et préciser si $f$ est bijective.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p><strong>Noyau.</strong> Le système $\begin{cases} x+y=0 \\ y+z=0 \\ x+z=0 \end{cases}$ donne $x=y=z=0$, donc $\ker(f)=\{0\}$.</p>
+            <p><strong>Filouterie ★.</strong> $\dim \mathbb{R}^3 = 3$ fini, $\ker(f)=\{0\}$ donc $f$ injective. Par "injective = surjective = bijective" en dim. finie égale, $f$ est bijective.</p>
+            <p><strong>Image et rang :</strong> $\operatorname{Im}(f) = \mathbb{R}^3$, $\operatorname{rg}(f) = 3$.</p>
+            <p><strong>Vérification rang :</strong> $0 + 3 = 3 = \dim \mathbb{R}^3$. ✓</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 3</span> AL entre espaces de polynômes</div>
+        <p><strong>Énoncé.</strong> Soit $\varphi : \mathbb{R}_3[X] \to \mathbb{R}_3[X]$, $P \mapsto P(X+1) - P(X)$. Montrer linéaire, calculer noyau, image, rang.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p><strong>Linéarité :</strong> immédiate.</p>
+            <p><strong>Noyau :</strong> $\varphi(P)=0 \iff P(X+1)=P(X) \iff P$ constant. $\ker(\varphi) = \mathbb{R}_0[X] = \operatorname{Vect}(1)$, dim $1$.</p>
+            <p><strong>Rang :</strong> $\operatorname{rg}(\varphi) = 4 - 1 = 3$.</p>
+            <p><strong>Image :</strong> sur la base canonique : $\varphi(1)=0$, $\varphi(X)=1$, $\varphi(X^2)=2X+1$, $\varphi(X^3)=3X^2+3X+1$. Donc $\operatorname{Im}(\varphi) = \operatorname{Vect}(1, 2X+1, 3X^2+3X+1) = \mathbb{R}_2[X]$.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 4</span> Nature d'une série par comparaison</div>
+        <p><strong>Énoncé.</strong> Étudier la nature de :</p>
+        <ol>
+          <li>$\sum_{n \geq 1} \dfrac{n + \ln n}{n^3 + 2n}$</li>
+          <li>$\sum_{n \geq 2} \dfrac{1}{n \ln n}$</li>
+          <li>$\sum_{n \geq 1} \sin\!\left(\dfrac{1}{n^2}\right)$</li>
+        </ol>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p><strong>1.</strong> $\dfrac{n + \ln n}{n^3 + 2n} \sim \dfrac{1}{n^2}$. Riemann avec $\alpha = 2 > 1$ : <strong>converge</strong>.</p>
+            <p><strong>2.</strong> Comparaison série–intégrale avec $f(t) = 1/(t \ln t)$ :
+            $\int_2^X \frac{\mathrm{d}t}{t \ln t} = \ln(\ln X) - \ln(\ln 2) \to +\infty$. <strong>Diverge</strong>.</p>
+            <p><strong>3.</strong> $\sin(1/n^2) \sim 1/n^2$. <strong>Converge</strong>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 5</span> Mêler dimension et AL</div>
+        <p><strong>Énoncé.</strong> Soit $f \in \mathcal{L}(E)$ avec $\dim E = n$ et $f^2 = 0$. Montrer que $\operatorname{Im}(f) \subset \ker(f)$ et $\operatorname{rg}(f) \leq n/2$.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p><strong>Inclusion.</strong> $y \in \operatorname{Im}(f) \Rightarrow y = f(x) \Rightarrow f(y) = f^2(x) = 0 \Rightarrow y \in \ker(f)$.</p>
+            <p><strong>Inégalité.</strong> $\operatorname{rg}(f) \leq \dim \ker(f) = n - \operatorname{rg}(f)$, donc $2\operatorname{rg}(f) \leq n$. ∎</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="methodes">
+      <div class="section-header">
+        <span class="section-num">§ 5</span>
+        <h2>Méthodes</h2>
+      </div>
+
+      <h3>Pour les applications linéaires</h3>
+
+      <div class="card method">
+        <span class="card-label">Méthode 1 · Montrer que $f$ est linéaire</span>
+        Partir de $u, v, \lambda$, calculer $f(u + \lambda v)$ et factoriser pour retrouver $f(u) + \lambda f(v)$.
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 2 · Calculer $\ker(f)$</span>
+        Résoudre $f(x) = 0$. En coordonnées, c'est un <strong>système linéaire homogène</strong> ; on l'échelonne par pivot.
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 3 · Calculer $\operatorname{Im}(f)$</span>
+        Prendre une base $(e_1, \dots, e_n)$ de $E$, calculer les $f(e_i)$ : $\operatorname{Im}(f) = \operatorname{Vect}(f(e_1), \dots, f(e_n))$. Échelonner.
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 4 · Filouter avec la dimension</span>
+        En dim. finie égale : injective ⇔ surjective ⇔ bijective. <strong>Toujours préférer prouver l'injectivité</strong> (calcul de $\ker$).
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 5 · Théorème du rang</span>
+        Connaître $\dim \ker$ pour en déduire $\operatorname{rg}$ (et inversement). Vérifier ses calculs : $\dim \ker + \operatorname{rg} = \dim E$.
+      </div>
+
+      <h3>Pour les séries</h3>
+
+      <div class="card method">
+        <span class="card-label">Méthode 6 · Stratégie d'attaque</span>
+        <ol>
+          <li>$u_n \to 0$ ? Sinon, divergence grossière.</li>
+          <li>Termes positifs APCR ? Si oui : comparaison, équivalents, $O$, $o$.</li>
+          <li>Trouver un équivalent simple — souvent une série de référence.</li>
+          <li>Sinon, majoration par CV ou minoration par DV.</li>
+          <li>Cas exotique : comparaison série–intégrale.</li>
+        </ol>
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 7 · DL pour trouver un équivalent</span>
+        Devant $\ln(1+1/n)$, $\sin(1/n)$, etc., faire un DL en $0$ de $f(1/n)$ :
+        <ul>
+          <li>$\ln(1 + 1/n) \sim 1/n$ → diverge.</li>
+          <li>$1 - \cos(1/n) \sim 1/(2n^2)$ → converge.</li>
+          <li>$\sqrt{n+1} - \sqrt{n} \sim 1/(2\sqrt{n})$ → diverge.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="pieges">
+      <div class="section-header">
+        <span class="section-num">§ 6</span>
+        <h2>Pièges & mantras</h2>
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 1</span>
+        « $u_n \to 0$ donc $\sum u_n$ converge » <strong>FAUX</strong>. Contre-exemple : harmonique.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 2</span>
+        Équivalent sur série non positive : <strong>nécessite signe positif APCR</strong>.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 3</span>
+        Confondre $f$ injective et $\operatorname{Im}(f) = F$. Premier = $\ker = \{0\}$ ; second = surjectivité.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 4</span>
+        "Injective ⇔ surjective" <strong>seulement en dim. finie ÉGALE</strong>. Contre-ex : $D : \mathbb{R}[X] \to \mathbb{R}[X]$, $P \mapsto P'$ surjective non injective.
+      </div>
+
+      <h3>Mantras à se répéter</h3>
+      <ul>
+        <li>★ <em>« En dim. finie égale, injective = surjective = bijective. »</em></li>
+        <li>★ <em>« Le théorème du rang me sauve les calculs. »</em></li>
+        <li>★ <em>« Avant un équivalent sur une série, je vérifie le signe. »</em></li>
+        <li>★ <em>« Riemann CV ⇔ $\alpha > 1$. Géométrique CV ⇔ $|q| < 1$. »</em></li>
+      </ul>
+    </section>
+
+  </div> <!-- /semaine 27 avril maths -->
+
+</div> <!-- /matiere maths -->
+
+
+<!-- ============================================== -->
+<!-- ============ MATIÈRE : PHYSIQUE ============== -->
+<!-- ============================================== -->
+<div class="matiere-content" data-matiere="physique">
+
+  <!-- ============ SEMAINE DU 18 MAI ============ -->
+  <div class="semaine-content active" data-semaine="2026-05-18" data-matiere="physique" data-titre="Semaine du 18 mai">
+
+    <section id="programme">
+      <div class="section-header">
+        <span class="section-num">§ 0</span>
+        <h2>Programme · Oxydoréduction, E-pH & Thermodynamique</h2>
+      </div>
+
+      <div class="intro">
+        <p>Programme dense et transversal cette semaine : on attaque la <strong>thermodynamique</strong> (théorie cinétique, premier principe), tout en consolidant la <strong>chimie des oxydoréductions</strong> et les <strong>diagrammes E-pH</strong>. Trois blocs distincts mais qui peuvent tous tomber.</p>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Bloc 1 · Chimie</span>
+            <span class="meta-value">Réactions d'oxydoréduction</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Bloc 2 · Chimie</span>
+            <span class="meta-value">Diagrammes E-pH</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Bloc 3 · Thermo</span>
+            <span class="meta-value">Théorie cinétique + 1er principe</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">À maîtriser</span>
+            <span class="meta-value">Nernst, formules de Joule, relation de Mayer, Laplace</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cours-redox">
+      <div class="section-header">
+        <span class="section-num">§ 1</span>
+        <h2>Cours · Oxydoréduction</h2>
+      </div>
+
+      <h3>1.1 — Définitions de base</h3>
+
+      <div class="card definition">
+        <span class="card-label">Définitions</span>
+        <ul style="margin-top:0.4rem">
+          <li><strong>Oxydant</strong> : espèce qui capte des électrons (subit une réduction).</li>
+          <li><strong>Réducteur</strong> : espèce qui cède des électrons (subit une oxydation).</li>
+          <li><strong>Oxydation</strong> : perte d'électrons. <strong>Réduction</strong> : gain d'électrons.</li>
+          <li><strong>Couple rédox</strong> noté $\mathrm{Ox/Red}$ relié par la demi-équation : $\mathrm{Ox} + n e^- \rightleftharpoons \mathrm{Red}$.</li>
+        </ul>
+      </div>
+
+      <p><strong>Mnémotechnique :</strong> "OIL RIG" — <em>Oxidation Is Loss, Reduction Is Gain</em> (d'électrons).</p>
+
+      <h3>1.2 — Nombre d'oxydation (n.o.)</h3>
+
+      <div class="card definition">
+        <span class="card-label">Règles de calcul du n.o.</span>
+        <ul style="margin-top:0.4rem">
+          <li>n.o. d'un atome dans un corps simple = $0$ (ex. $\mathrm{O}_2$, $\mathrm{Fe}$).</li>
+          <li>n.o. d'un ion monoatomique = sa charge (ex. $\mathrm{Fe}^{3+}$ → n.o. $= +\mathrm{III}$).</li>
+          <li>$\mathrm{H}$ généralement $+\mathrm{I}$, sauf hydrures ($-\mathrm{I}$).</li>
+          <li>$\mathrm{O}$ généralement $-\mathrm{II}$, sauf peroxydes ($-\mathrm{I}$) et $\mathrm{OF}_2$ ($+\mathrm{II}$).</li>
+          <li>Somme des n.o. = charge globale de l'espèce.</li>
+        </ul>
+      </div>
+
+      <p><strong>Variation de n.o.</strong> au cours d'une réaction :</p>
+      <ul>
+        <li>n.o. ↑ → oxydation</li>
+        <li>n.o. ↓ → réduction</li>
+      </ul>
+
+      <h3>1.3 — Potentiel d'électrode et formule de Nernst</h3>
+
+      <div class="card formula">
+        <span class="card-label">Formule de Nernst ★</span>
+        Pour un couple $\mathrm{Ox} + n e^- \rightleftharpoons \mathrm{Red}$ :
+        $$E = E^\circ + \frac{RT}{nF} \ln\frac{a_{\mathrm{Ox}}}{a_{\mathrm{Red}}}$$
+        À $T = 298\ \mathrm{K}$, on utilise quasi systématiquement la version condensée :
+        $$\boxed{E = E^\circ + \frac{0{,}06}{n} \log\frac{[\mathrm{Ox}]}{[\mathrm{Red}]}}\quad \text{(en V)}$$
+      </div>
+
+      <p><strong>Notations :</strong></p>
+      <ul>
+        <li>$E^\circ$ = potentiel <strong>standard</strong> du couple (V), tabulé.</li>
+        <li>$F = 96\,485\ \mathrm{C \cdot mol^{-1}}$ : constante de Faraday.</li>
+        <li>$n$ : nombre d'électrons échangés dans la demi-équation.</li>
+        <li>$a_i$ : activité (≈ concentration en mol/L pour soluté dilué, $1$ pour solide pur ou solvant).</li>
+      </ul>
+
+      <h3>1.4 — Piles électrochimiques</h3>
+
+      <div class="card definition">
+        <span class="card-label">Vocabulaire des piles</span>
+        <ul style="margin-top:0.4rem">
+          <li><strong>Cathode</strong> : électrode où se produit la <strong>réduction</strong> (borne $+$ d'une pile qui débite).</li>
+          <li><strong>Anode</strong> : électrode où se produit l'<strong>oxydation</strong> (borne $-$).</li>
+          <li><strong>F.e.m.</strong> (force électromotrice) : $e = E_+ - E_- > 0$ par convention.</li>
+        </ul>
+      </div>
+
+      <p><strong>Astuce mnémotechnique :</strong> "RedCat - OxAn" (<em>Réduction Cathode - Oxydation Anode</em>).</p>
+
+      <h3>1.5 — Électrodes de référence</h3>
+
+      <table>
+        <thead>
+          <tr><th>Électrode</th><th>Couple</th><th>Caractéristique</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ESH (standard à hydrogène)</td><td>$\mathrm{H^+/H_2}$</td><td>$E^\circ = 0$ V par convention</td></tr>
+          <tr><td>ECS (calomel saturé)</td><td>$\mathrm{Hg_2Cl_2/Hg}$</td><td>$E = 0{,}244$ V à 25°C</td></tr>
+          <tr><td>Chlorure d'argent</td><td>$\mathrm{AgCl/Ag}$</td><td>$E = 0{,}197$ V (KCl saturé)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>1.6 — Diagrammes de prédominance</h3>
+
+      <p>Pour un couple $\mathrm{Ox/Red}$, on trace sur l'axe des potentiels une frontière à $E = E^\circ$ (cas $n_\mathrm{ox} = n_\mathrm{red}$). Au-dessus, l'oxydant prédomine ; en dessous, le réducteur.</p>
+
+      <p><strong>Règle dite du gamma (γ) :</strong> sur un diagramme à plusieurs couples, un oxydant fort réagit avec un réducteur fort si leurs domaines sont disjoints. Lecture en forme de "γ" : flèche descendante (réduction) puis remontée (oxydation).</p>
+
+      <h3>1.7 — Lien $E^\circ$ ↔ constante d'équilibre</h3>
+
+      <div class="card formula">
+        <span class="card-label">Relation fondamentale</span>
+        Pour une réaction $\mathrm{Ox_1 + Red_2 \rightleftharpoons Red_1 + Ox_2}$ avec $n$ électrons échangés :
+        $$\boxed{\log K = \frac{n(E^\circ_1 - E^\circ_2)}{0{,}06}}\quad \text{(à 298 K)}$$
+        Plus $\Delta E^\circ$ est grand, plus la réaction est totale.
+      </div>
+
+      <h3>1.8 — Potentiométrie (principe)</h3>
+
+      <p>On mesure la différence de potentiel entre une <strong>électrode indicatrice</strong> (sensible aux espèces en solution) et une <strong>électrode de référence</strong> (potentiel fixe). Permet de déterminer une concentration inconnue, suivre un titrage, etc.</p>
+    </section>
+
+    <section id="cours-eph">
+      <div class="section-header">
+        <span class="section-num">§ 2</span>
+        <h2>Cours · Diagrammes E-pH</h2>
+      </div>
+
+      <h3>2.1 — Principe</h3>
+
+      <p>Un diagramme E-pH (ou diagramme de Pourbaix) représente les <strong>domaines de prédominance</strong> ou d'<strong>existence</strong> des différentes espèces d'un élément en solution aqueuse, en fonction du potentiel $E$ et du pH.</p>
+
+      <div class="card definition">
+        <span class="card-label">Conventions de tracé</span>
+        <ul style="margin-top:0.4rem">
+          <li>Concentration totale de l'élément fixée (ex. $C_\mathrm{tot} = 10^{-2}\ \mathrm{mol \cdot L^{-1}}$).</li>
+          <li>À une frontière, on adopte une convention de partage : équipartition entre deux espèces solubles, ou apparition du précipité.</li>
+        </ul>
+      </div>
+
+      <h3>2.2 — Trois types de frontières</h3>
+
+      <ul>
+        <li><strong>Frontière verticale</strong> ($E$ indépendant du pH) : équilibre acide-base sans transfert d'électrons.</li>
+        <li><strong>Frontière horizontale</strong> ($E$ indépendant du pH) : équilibre rédox sans $\mathrm{H}^+$ ni $\mathrm{OH}^-$.</li>
+        <li><strong>Frontière oblique</strong> ($E$ dépend du pH) : équilibre rédox avec échange de $\mathrm{H}^+$. L'équation s'obtient via Nernst.</li>
+      </ul>
+
+      <h3>2.3 — Diagramme E-pH de l'eau</h3>
+
+      <p>Deux frontières essentielles à connaître par cœur :</p>
+
+      <div class="card formula">
+        <span class="card-label">Frontière haute : $\mathrm{O_2/H_2O}$</span>
+        Demi-équation : $\mathrm{O_2 + 4H^+ + 4e^- \rightleftharpoons 2 H_2O}$, $E^\circ = 1{,}23$ V.
+        $$E_1 = 1{,}23 - 0{,}06 \cdot \mathrm{pH}\quad \text{(à } P_{\mathrm{O_2}} = 1\ \mathrm{bar}\text{)}$$
+      </div>
+
+      <div class="card formula">
+        <span class="card-label">Frontière basse : $\mathrm{H^+/H_2}$</span>
+        Demi-équation : $\mathrm{2 H^+ + 2 e^- \rightleftharpoons H_2}$, $E^\circ = 0$ V.
+        $$E_2 = -0{,}06 \cdot \mathrm{pH}\quad \text{(à } P_{\mathrm{H_2}} = 1\ \mathrm{bar}\text{)}$$
+      </div>
+
+      <p><strong>Interprétation :</strong> entre les deux droites, l'eau est <em>thermodynamiquement stable</em>. Au-dessus, elle est oxydée en $\mathrm{O_2}$ ; en dessous, elle est réduite en $\mathrm{H_2}$.</p>
+
+      <h3>2.4 — Lecture & utilisation</h3>
+
+      <p>Pour exploiter un diagramme E-pH :</p>
+      <ol>
+        <li>Repérer la <strong>position du point</strong> $(\mathrm{pH}, E)$ représentant le système.</li>
+        <li>Identifier les <strong>espèces stables</strong> à cette position pour chaque élément.</li>
+        <li>Si deux domaines sont disjoints (un oxydant et un réducteur), il y a réaction spontanée.</li>
+        <li>Comparer avec le diagramme de l'eau pour voir si une espèce attaque $\mathrm{H_2O}$ ou est attaquée par elle.</li>
+      </ol>
+
+      <p><em>Vu en TD :</em> diagramme de l'iode (construction guidée), diagramme du titane (analyse).</p>
+    </section>
+
+    <section id="cours-thermo">
+      <div class="section-header">
+        <span class="section-num">§ 3</span>
+        <h2>Cours · Thermodynamique</h2>
+      </div>
+
+      <h3>3.1 — Théorie cinétique des gaz parfaits</h3>
+
+      <div class="card formula">
+        <span class="card-label">Équation d'état du gaz parfait</span>
+        $$\boxed{PV = nRT}$$
+        avec $R = 8{,}314\ \mathrm{J \cdot K^{-1} \cdot mol^{-1}}$.
+      </div>
+
+      <div class="card definition">
+        <span class="card-label">Température cinétique</span>
+        L'énergie cinétique moyenne de translation d'une molécule de gaz parfait s'écrit :
+        $$\langle e_c \rangle = \frac{3}{2} k_B T$$
+        où $k_B = R/\mathcal{N}_A \approx 1{,}38 \cdot 10^{-23}\ \mathrm{J/K}$ est la constante de Boltzmann. La température mesure donc l'agitation thermique microscopique.
+      </div>
+
+      <h3>3.2 — Énergie interne et 1ère loi de Joule</h3>
+
+      <div class="card definition">
+        <span class="card-label">Énergie interne</span>
+        $U$ = énergie totale stockée par le système au niveau microscopique (cinétique d'agitation + potentielles d'interaction).
+      </div>
+
+      <div class="card theorem">
+        <span class="card-label">1ère loi de Joule (gaz parfait)</span>
+        Pour un gaz parfait, l'énergie interne ne dépend <strong>que de la température</strong> :
+        $$U = U(T).$$
+        En particulier $\mathrm{d}U = C_V \mathrm{d}T$, et lors d'une détente de Joule-Gay-Lussac, $\Delta T = 0$.
+      </div>
+
+      <h3>3.3 — Capacités thermiques</h3>
+
+      <div class="card formula">
+        <span class="card-label">Définitions</span>
+        $$C_V = \left(\frac{\partial U}{\partial T}\right)_V \quad ; \quad C_P = \left(\frac{\partial H}{\partial T}\right)_P$$
+        Pour un GP monoatomique : $C_V = \frac{3}{2}nR$, $C_P = \frac{5}{2}nR$.<br>
+        Pour un GP diatomique (à $T$ ambiante) : $C_V = \frac{5}{2}nR$, $C_P = \frac{7}{2}nR$.
+      </div>
+
+      <p><strong>Phases condensées (liquide, solide) :</strong> $C_V \approx C_P \equiv C$, et $U$ et $H$ ne dépendent quasi que de $T$.</p>
+
+      <h3>3.4 — Premier principe de la thermodynamique</h3>
+
+      <div class="card theorem">
+        <span class="card-label">Énoncé du 1er principe ★</span>
+        Pour un système fermé subissant une transformation entre deux états d'équilibre :
+        $$\boxed{\Delta U = W + Q}$$
+        où $W$ est le travail des forces extérieures et $Q$ la chaleur (algébriques). $U$ est une <strong>fonction d'état</strong>.
+      </div>
+
+      <h3>3.5 — Travail des forces de pression</h3>
+
+      <div class="card formula">
+        <span class="card-label">Travail élémentaire</span>
+        $$\delta W = -P_\mathrm{ext}\,\mathrm{d}V$$
+        <strong>Cas particuliers :</strong>
+        <ul style="margin-top:0.4rem">
+          <li><strong>Quasi-statique</strong> : $P_\mathrm{ext} = P$ et $W = -\int_{V_1}^{V_2} P\,\mathrm{d}V$.</li>
+          <li><strong>Isobare</strong> ($P$ cst) : $W = -P(V_2 - V_1)$.</li>
+          <li><strong>Isochore</strong> ($V$ cst) : $W = 0$.</li>
+          <li><strong>Isotherme quasi-stat. d'un GP</strong> : $W = -nRT \ln(V_2/V_1)$.</li>
+        </ul>
+      </div>
+
+      <p><strong>Visualisation Clapeyron :</strong> dans le diagramme $(V, P)$, $|W|$ correspond à l'aire sous la courbe $P(V)$ pour une transformation quasi-statique.</p>
+
+      <h3>3.6 — Enthalpie et 2ème loi de Joule</h3>
+
+      <div class="card definition">
+        <span class="card-label">Définition · Enthalpie</span>
+        $$H = U + PV.$$
+        Avantage : pour une transformation <strong>monobare</strong> avec équilibre mécanique aux bornes, $\Delta H = Q_P$ (chaleur reçue à pression constante).
+      </div>
+
+      <div class="card theorem">
+        <span class="card-label">2ème loi de Joule (gaz parfait)</span>
+        Pour un GP, $H$ ne dépend que de $T$ : $H = H(T)$, et $\mathrm{d}H = C_P\,\mathrm{d}T$. Lors d'une détente de Joule-Thomson d'un GP, $\Delta T = 0$.
+      </div>
+
+      <h3>3.7 — Relation de Mayer & coefficient γ</h3>
+
+      <div class="card formula">
+        <span class="card-label">Relation de Mayer (GP)</span>
+        $$\boxed{C_P - C_V = nR}$$
+        et le coefficient adiabatique :
+        $$\gamma = \frac{C_P}{C_V} > 1.$$
+        Conséquence : $C_V = \dfrac{nR}{\gamma - 1}$ et $C_P = \dfrac{nR\gamma}{\gamma - 1}$.<br>
+        Valeurs : $\gamma = 5/3 \approx 1{,}67$ (monoat.), $\gamma = 7/5 = 1{,}4$ (diat.).
+      </div>
+
+      <h3>3.8 — Loi de Laplace (adiabatique quasi-stat.)</h3>
+
+      <div class="card formula">
+        <span class="card-label">Lois de Laplace ★</span>
+        Pour une transformation <strong>adiabatique quasi-statique</strong> d'un gaz parfait :
+        $$\boxed{PV^\gamma = \text{cste} \ ;\ \ TV^{\gamma-1} = \text{cste} \ ;\ \ T^\gamma P^{1-\gamma} = \text{cste}}$$
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Conditions d'application</span>
+        Trois conditions <strong>simultanées</strong> et obligatoires :
+        <ol>
+          <li>Gaz parfait.</li>
+          <li>Transformation adiabatique ($Q = 0$).</li>
+          <li>Transformation quasi-statique (ou réversible).</li>
+        </ol>
+        Hors de ces conditions, Laplace est <strong>fausse</strong>.
+      </div>
+
+      <h3>3.9 — Calorimétrie</h3>
+
+      <p>Principe : on isole un système et on écrit la conservation de l'énergie $\sum Q_i = 0$ (transformations souvent isobares avec $Q = \Delta H$, ou isochores avec $Q = \Delta U$).</p>
+
+      <p><strong>Type d'application :</strong> mélange eau chaude / eau froide, mesure de capacité d'un calorimètre, chaleur latente d'un changement d'état.</p>
+    </section>
+
+    <section id="preuves">
+      <div class="section-header">
+        <span class="section-num">§ 4</span>
+        <h2>Démonstrations exigibles</h2>
+      </div>
+
+      <button class="toggle-all" onclick="toggleAll('preuves')">Tout déplier / replier</button>
+
+      <details>
+        <summary>
+          <span class="preuve-num">D.1</span>
+          <span class="summary-text">Lien entre $E^\circ$ et constante d'équilibre $K$.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Pour la réaction d'oxydoréduction $\mathrm{Ox_1 + Red_2 \to Red_1 + Ox_2}$ entre deux couples de potentiels standard $E^\circ_1$ et $E^\circ_2$, échangeant $n$ électrons : $\log K = \dfrac{n(E^\circ_1 - E^\circ_2)}{0{,}06}.$
+          </div>
+
+          <div class="preuve-step">
+            <strong>Étape 1.</strong> À l'équilibre, les deux potentiels sont égaux ($E_1 = E_2$) car le système est à l'équilibre électrochimique.
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 2.</strong> Nernst pour chaque couple :
+            $$E_1 = E^\circ_1 + \frac{0{,}06}{n} \log\frac{[\mathrm{Ox_1}]}{[\mathrm{Red_1}]} \quad ;\quad E_2 = E^\circ_2 + \frac{0{,}06}{n} \log\frac{[\mathrm{Ox_2}]}{[\mathrm{Red_2}]}$$
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 3.</strong> $E_1 = E_2$ donne :
+            $$E^\circ_1 - E^\circ_2 = \frac{0{,}06}{n} \left[ \log\frac{[\mathrm{Ox_2}]}{[\mathrm{Red_2}]} - \log\frac{[\mathrm{Ox_1}]}{[\mathrm{Red_1}]} \right] = \frac{0{,}06}{n} \log\frac{[\mathrm{Red_1}][\mathrm{Ox_2}]}{[\mathrm{Ox_1}][\mathrm{Red_2}]}.$$
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 4.</strong> On reconnaît $K = \dfrac{[\mathrm{Red_1}][\mathrm{Ox_2}]}{[\mathrm{Ox_1}][\mathrm{Red_2}]}$. D'où :
+            $$\log K = \frac{n(E^\circ_1 - E^\circ_2)}{0{,}06}.$$
+          </div>
+          <div class="qed">∎</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="preuve-num">D.2</span>
+          <span class="summary-text">Travail isotherme quasi-statique d'un GP.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Pour une transformation isotherme quasi-statique d'un gaz parfait de l'état $(P_1, V_1)$ à $(P_2, V_2)$, le travail reçu vaut $W = -nRT \ln\dfrac{V_2}{V_1}$.
+          </div>
+
+          <div class="preuve-step">
+            <strong>Étape 1.</strong> Quasi-statique : $P_\mathrm{ext} = P$ à chaque instant. Donc $\delta W = -P\,\mathrm{d}V$.
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 2.</strong> GP : $P = nRT/V$. À $T$ constant :
+            $$W = -\int_{V_1}^{V_2} \frac{nRT}{V}\,\mathrm{d}V = -nRT \int_{V_1}^{V_2} \frac{\mathrm{d}V}{V} = -nRT \ln\frac{V_2}{V_1}.$$
+          </div>
+          <div class="qed">∎</div>
+          <p style="margin-top:0.8rem;font-size:0.92rem;font-style:italic;">
+            <strong>Cohérence des signes :</strong> compression ($V_2 < V_1$) → $W > 0$ (le système reçoit du travail). Dilatation → $W < 0$.
+          </p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="preuve-num">D.3</span>
+          <span class="summary-text">Loi de Laplace $PV^\gamma = \text{cste}$.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Pour une transformation adiabatique quasi-statique d'un gaz parfait, $PV^\gamma = \mathrm{cste}$.
+          </div>
+
+          <div class="preuve-step">
+            <strong>Étape 1.</strong> 1er principe sur une transformation infinitésimale : $\mathrm{d}U = \delta Q + \delta W$. Adiabatique : $\delta Q = 0$. Quasi-statique : $\delta W = -P\,\mathrm{d}V$. D'où $\mathrm{d}U = -P\,\mathrm{d}V$.
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 2.</strong> 1ère loi de Joule : $\mathrm{d}U = C_V\,\mathrm{d}T$. Donc $C_V\,\mathrm{d}T = -P\,\mathrm{d}V$.
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 3.</strong> Différentier l'équation d'état $PV = nRT$ : $P\,\mathrm{d}V + V\,\mathrm{d}P = nR\,\mathrm{d}T$, soit $\mathrm{d}T = \dfrac{P\,\mathrm{d}V + V\,\mathrm{d}P}{nR}$.
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 4.</strong> Substituer dans $C_V\,\mathrm{d}T = -P\,\mathrm{d}V$ :
+            $$\frac{C_V}{nR}(P\,\mathrm{d}V + V\,\mathrm{d}P) = -P\,\mathrm{d}V.$$
+            Or $C_V/nR = 1/(\gamma - 1)$ par Mayer. En réarrangeant :
+            $$P\,\mathrm{d}V + V\,\mathrm{d}P = -(\gamma-1) P\,\mathrm{d}V \implies \gamma P\,\mathrm{d}V + V\,\mathrm{d}P = 0.$$
+          </div>
+          <div class="preuve-step">
+            <strong>Étape 5.</strong> Diviser par $PV$ :
+            $$\gamma \frac{\mathrm{d}V}{V} + \frac{\mathrm{d}P}{P} = 0 \implies \mathrm{d}\bigl(\ln(PV^\gamma)\bigr) = 0.$$
+            D'où $PV^\gamma = \mathrm{cste}$.
+          </div>
+          <div class="qed">∎</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="preuve-num">D.4</span>
+          <span class="summary-text">Frontières du diagramme E-pH de l'eau.</span>
+        </summary>
+        <div class="preuve-content">
+          <div class="enonce">
+            Établir les équations $E_1 = 1{,}23 - 0{,}06\,\mathrm{pH}$ (frontière $\mathrm{O_2/H_2O}$) et $E_2 = -0{,}06\,\mathrm{pH}$ (frontière $\mathrm{H^+/H_2}$) à $P = 1$ bar.
+          </div>
+
+          <div class="preuve-step">
+            <strong>Frontière $\mathrm{O_2/H_2O}$.</strong> Demi-équation : $\mathrm{O_2 + 4H^+ + 4e^- \rightleftharpoons 2H_2O}$. Nernst :
+            $$E_1 = 1{,}23 + \frac{0{,}06}{4} \log\bigl(P_{\mathrm{O_2}} \cdot [\mathrm{H^+}]^4\bigr) = 1{,}23 + \frac{0{,}06}{4}\log P_{\mathrm{O_2}} + 0{,}06 \log[\mathrm{H^+}].$$
+            À $P_{\mathrm{O_2}} = 1$ bar, $\log[\mathrm{H^+}] = -\mathrm{pH}$, donc $E_1 = 1{,}23 - 0{,}06\,\mathrm{pH}$.
+          </div>
+          <div class="preuve-step">
+            <strong>Frontière $\mathrm{H^+/H_2}$.</strong> Demi-équation : $\mathrm{2H^+ + 2e^- \rightleftharpoons H_2}$. Nernst :
+            $$E_2 = 0 + \frac{0{,}06}{2} \log\frac{[\mathrm{H^+}]^2}{P_{\mathrm{H_2}}} = 0{,}06 \log[\mathrm{H^+}] - \frac{0{,}06}{2}\log P_{\mathrm{H_2}}.$$
+            À $P_{\mathrm{H_2}} = 1$ bar : $E_2 = -0{,}06\,\mathrm{pH}$.
+          </div>
+          <div class="qed">∎</div>
+        </div>
+      </details>
+    </section>
+
+    <section id="exos">
+      <div class="section-header">
+        <span class="section-num">§ 5</span>
+        <h2>Exercices types</h2>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 1</span> Calcul d'une f.e.m. de pile</div>
+        <p><strong>Énoncé.</strong> On constitue une pile Daniell : $\mathrm{Zn|Zn^{2+}(0{,}1\,M)\,\|\,Cu^{2+}(0{,}01\,M)|Cu}$. Données : $E^\circ(\mathrm{Cu^{2+}/Cu}) = 0{,}34$ V, $E^\circ(\mathrm{Zn^{2+}/Zn}) = -0{,}76$ V. Calculer la f.e.m.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p>Pour chaque électrode, Nernst (les solides ont activité 1, $n=2$) :</p>
+            $$E_{\mathrm{Cu}} = 0{,}34 + \frac{0{,}06}{2}\log(0{,}01) = 0{,}34 - 0{,}06 = 0{,}28\ \mathrm{V}.$$
+            $$E_{\mathrm{Zn}} = -0{,}76 + \frac{0{,}06}{2}\log(0{,}1) = -0{,}76 - 0{,}03 = -0{,}79\ \mathrm{V}.$$
+            <p>F.e.m. = $E_+ - E_- = E_\mathrm{Cu} - E_\mathrm{Zn} = 0{,}28 - (-0{,}79) = 1{,}07$ V.</p>
+            <p>La cathode est l'électrode de Cu (réduction), l'anode celle de Zn (oxydation).</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 2</span> Constante d'équilibre d'une réaction rédox</div>
+        <p><strong>Énoncé.</strong> Calculer $K$ pour la réaction $\mathrm{2 Fe^{3+} + Sn^{2+} \to 2 Fe^{2+} + Sn^{4+}}$. Données : $E^\circ(\mathrm{Fe^{3+}/Fe^{2+}}) = 0{,}77$ V, $E^\circ(\mathrm{Sn^{4+}/Sn^{2+}}) = 0{,}15$ V.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p>Nombre d'électrons échangés : $n = 2$ (deux $\mathrm{Fe^{3+}}$ captent $1\ e^-$ chacun, $\mathrm{Sn^{2+}}$ cède $2\ e^-$).</p>
+            $$\log K = \frac{2 \times (0{,}77 - 0{,}15)}{0{,}06} = \frac{2 \times 0{,}62}{0{,}06} \approx 20{,}7.$$
+            <p>$K \approx 5 \cdot 10^{20}$ : réaction quasi-totale dans le sens direct.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 3</span> Compression adiabatique d'un GP</div>
+        <p><strong>Énoncé.</strong> Une mole de gaz parfait diatomique ($\gamma = 1{,}4$) est comprimée de manière adiabatique quasi-statique de $(P_1 = 1\ \mathrm{bar}, T_1 = 300\ \mathrm{K})$ à $V_2 = V_1/10$. Calculer $T_2$, $P_2$, $W$, $\Delta U$.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p><strong>Loi de Laplace en $TV^{\gamma-1}$ :</strong></p>
+            $$T_2 = T_1 \left(\frac{V_1}{V_2}\right)^{\gamma-1} = 300 \times 10^{0{,}4} \approx 300 \times 2{,}51 \approx 754\ \mathrm{K}.$$
+            <p><strong>$P_2$ via Laplace en $PV^\gamma$ :</strong></p>
+            $$P_2 = P_1 \left(\frac{V_1}{V_2}\right)^\gamma = 1 \times 10^{1{,}4} \approx 25{,}1\ \mathrm{bar}.$$
+            <p><strong>$\Delta U$ (1ère loi de Joule) :</strong></p>
+            $$\Delta U = C_V \Delta T = \frac{nR}{\gamma - 1}(T_2 - T_1) = \frac{8{,}314}{0{,}4} \times 454 \approx 9{,}4\ \mathrm{kJ}.$$
+            <p><strong>$W$ (1er principe avec $Q = 0$) :</strong> $W = \Delta U \approx 9{,}4$ kJ (positif : gaz comprimé reçoit du travail).</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 4</span> Calorimétrie — mélange</div>
+        <p><strong>Énoncé.</strong> Dans un calorimètre adiabatique de capacité négligeable, on mélange $m_1 = 200$ g d'eau à $T_1 = 80$ °C et $m_2 = 300$ g d'eau à $T_2 = 20$ °C. Quelle est la température finale $T_f$ ? Donnée : $c_e = 4{,}18\ \mathrm{kJ \cdot kg^{-1} \cdot K^{-1}}$.</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p>Adiabatique et isobare : $\sum Q_i = \sum \Delta H_i = 0$. Avec une phase condensée, $\Delta H = m c \Delta T$ :</p>
+            $$m_1 c_e (T_f - T_1) + m_2 c_e (T_f - T_2) = 0$$
+            $$T_f = \frac{m_1 T_1 + m_2 T_2}{m_1 + m_2} = \frac{200 \times 80 + 300 \times 20}{500} = \frac{16000 + 6000}{500} = 44\ \mathrm{°C}.$$
+            <p>Cohérent : la température finale est entre 20 et 80, et plus proche de 20 car il y a plus d'eau froide.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exo">
+        <div class="exo-title"><span class="exo-tag">Type 5</span> Lecture d'un diagramme E-pH</div>
+        <p><strong>Énoncé.</strong> Sur le diagramme E-pH du fer (espèces : $\mathrm{Fe}, \mathrm{Fe^{2+}}, \mathrm{Fe^{3+}}, \mathrm{Fe(OH)_2}, \mathrm{Fe(OH)_3}$), on superpose les frontières de l'eau. Le métal $\mathrm{Fe}$ est-il stable dans l'eau à pH = 7 ? Que se passe-t-il ?</p>
+        <details style="margin-top:0.8rem">
+          <summary><span class="summary-text">Solution</span></summary>
+          <div class="preuve-content">
+            <p>Le domaine de $\mathrm{Fe}$ (métal) sur un diagramme E-pH est <strong>très bas</strong> (typiquement $E < -0{,}6$ V), bien en dessous de la frontière $\mathrm{H^+/H_2}$ qui à pH = 7 vaut $-0{,}42$ V.</p>
+            <p>Les domaines de $\mathrm{Fe}$ et de $\mathrm{H_2O}$ sont disjoints : le fer métallique <strong>réduit l'eau</strong>. Réaction :</p>
+            $$\mathrm{Fe} + 2\mathrm{H_2O} \to \mathrm{Fe(OH)_2} + \mathrm{H_2}\uparrow$$
+            <p>C'est le phénomène de <strong>corrosion</strong> en milieu neutre. Cinétiquement lente mais thermodynamiquement spontanée.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="methodes">
+      <div class="section-header">
+        <span class="section-num">§ 6</span>
+        <h2>Méthodes</h2>
+      </div>
+
+      <h3>Oxydoréduction</h3>
+
+      <div class="card method">
+        <span class="card-label">Méthode 1 · Équilibrer une demi-équation</span>
+        <ol>
+          <li>Équilibrer l'élément qui change de n.o.</li>
+          <li>Équilibrer $\mathrm{O}$ avec $\mathrm{H_2O}$.</li>
+          <li>Équilibrer $\mathrm{H}$ avec $\mathrm{H^+}$.</li>
+          <li>Équilibrer les charges avec des $e^-$.</li>
+          <li>(En milieu basique : ajouter $\mathrm{OH^-}$ des deux côtés pour neutraliser $\mathrm{H^+}$.)</li>
+        </ol>
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 2 · Réaction prépondérante (règle du γ)</span>
+        Tracer les domaines sur l'axe $E$. L'oxydant le plus haut réagit avec le réducteur le plus bas <strong>si leurs domaines sont disjoints</strong>. Sinon, réaction limitée ou nulle.
+      </div>
+
+      <h3>Diagrammes E-pH</h3>
+
+      <div class="card method">
+        <span class="card-label">Méthode 3 · Construire une frontière oblique</span>
+        <ol>
+          <li>Écrire la demi-équation rédox <em>incluant les $\mathrm{H^+}$</em>.</li>
+          <li>Appliquer Nernst avec activités.</li>
+          <li>Substituer $\log[\mathrm{H^+}] = -\mathrm{pH}$ et regrouper.</li>
+          <li>Vérifier le signe de la pente : un coefficient en $-0{,}06\,m\,\mathrm{pH}/n$ avec $m$ = nb de $\mathrm{H^+}$ par électron.</li>
+        </ol>
+      </div>
+
+      <h3>Thermodynamique</h3>
+
+      <div class="card method">
+        <span class="card-label">Méthode 4 · Choisir la bonne formule</span>
+        Avant de calculer $W$ ou $Q$, identifier :
+        <ul>
+          <li>Type de transformation (isotherme, adiabatique, isobare, isochore, monobare, q.s. ou non).</li>
+          <li>Système (GP ? phase condensée ?).</li>
+          <li>Quelle fonction d'état suit ($U$ ou $H$ selon iso-V ou iso-P).</li>
+        </ul>
+        Dresser un petit tableau Avant/Après avec $P, V, T, n$ avant tout calcul.
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 5 · Vérifier Laplace</span>
+        Avant d'appliquer $PV^\gamma = \mathrm{cste}$, cocher mentalement les <strong>3 conditions</strong> : GP, adiabatique, q.s. (ou réversible). Sinon utiliser le 1er principe brut.
+      </div>
+
+      <div class="card method">
+        <span class="card-label">Méthode 6 · Calorimétrie</span>
+        <ol>
+          <li>Identifier toutes les phases en présence et leur capacité $C$.</li>
+          <li>Écrire $\sum Q_i = 0$ (système isolé) ou $\sum Q_i = Q_\mathrm{ext}$.</li>
+          <li>Pour chaque phase : $Q = mc\Delta T$ (ou $\Delta H$ d'un changement d'état si applicable).</li>
+          <li>Résoudre pour l'inconnue.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="pieges">
+      <div class="section-header">
+        <span class="section-num">§ 7</span>
+        <h2>Pièges & mantras</h2>
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 1</span>
+        Confondre <strong>$E$ et $E^\circ$</strong>. $E^\circ$ est le potentiel <em>standard</em> (activités = 1), tabulé. $E$ est le potentiel réel à un instant donné, calculé via Nernst.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 2</span>
+        Oublier que $\log$ n'a pas la même valeur que $\ln$ : la formule simplifiée $E = E^\circ + \frac{0{,}06}{n}\log(\cdot)$ utilise <strong>$\log$ en base 10</strong>.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 3</span>
+        Inverser cathode/anode. <strong>Mantra : "RedCat" — Réduction se fait à la Cathode</strong>, toujours, quelle que soit la pile ou l'électrolyse.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 4</span>
+        Appliquer Laplace sur une transformation <strong>non quasi-statique</strong> ou <strong>non adiabatique</strong> : erreur classique. Bien vérifier les 3 conditions.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 5</span>
+        Confondre <strong>$Q_P = \Delta H$</strong> (monobare) et <strong>$Q_V = \Delta U$</strong> (isochore). Ne pas mélanger.
+      </div>
+
+      <div class="card warning">
+        <span class="card-label">Piège 6</span>
+        Convention de signe : $W$ et $Q$ sont <strong>algébriques</strong>, comptés positivement quand le système les <strong>reçoit</strong>. Une compression donne $W > 0$, une détente $W < 0$.
+      </div>
+
+      <h3>Mantras à se répéter</h3>
+      <ul>
+        <li>★ <em>« RedCat / OxAn : Réduction = Cathode, Oxydation = Anode. »</em></li>
+        <li>★ <em>« Avant Laplace : GP + adiabatique + quasi-stat. ? »</em></li>
+        <li>★ <em>« $\Delta U = W + Q$ : c'est la grammaire de la thermo. »</em></li>
+        <li>★ <em>« GP : $U$ et $H$ ne dépendent que de $T$. »</em></li>
+        <li>★ <em>« À frontière oblique sur E-pH : Nernst avec $\mathrm{H^+}$ explicite. »</em></li>
+      </ul>
+    </section>
+
+  </div> <!-- /semaine 18 mai physique -->
+
+</div> <!-- /matiere physique -->
+
+</main>
+
+<footer>
+  <div class="ornament">⁂ ⁂ ⁂</div>
+  <p>Carnet de colles PTSI · Multi-matières · Multi-semaines<br>
+  Maintenir l'archive sur 3 semaines glissantes maximum.</p>
+</footer>
+
+<script>
+  // ============ DONNEES SEMAINES (à mettre à jour à chaque ajout) ============
+  // Ordre : du plus récent au plus ancien
+  const SEMAINES = {
+    maths: [
+      { id: '2026-04-27', titre: 'Sem. 27 avril', recent: true }
+    ],
+    physique: [
+      { id: '2026-05-18', titre: 'Sem. 18 mai', recent: true }
+    ]
+  };
+
+  // Sections de navigation par matière (selon les sections présentes dans la semaine active)
+  const NAV_SECTIONS = {
+    maths: [
+      { id: 'programme', label: 'Programme' },
+      { id: 'cours-al', label: 'Cours · AL' },
+      { id: 'cours-series', label: 'Cours · Séries' },
+      { id: 'preuves', label: 'Preuves' },
+      { id: 'exos', label: 'Exos types' },
+      { id: 'methodes', label: 'Méthodes' },
+      { id: 'pieges', label: 'Pièges' }
+    ],
+    physique: [
+      { id: 'programme', label: 'Programme' },
+      { id: 'cours-redox', label: 'Cours · Rédox' },
+      { id: 'cours-eph', label: 'Cours · E-pH' },
+      { id: 'cours-thermo', label: 'Cours · Thermo' },
+      { id: 'preuves', label: 'Démos' },
+      { id: 'exos', label: 'Exos types' },
+      { id: 'methodes', label: 'Méthodes' },
+      { id: 'pieges', label: 'Pièges' }
+    ]
+  };
+
+  let currentMatiere = 'maths';
+  let currentSemaine = SEMAINES.maths[0].id;
+
+  // ============ SWITCH MATIÈRE ============
+  document.querySelectorAll('.matiere-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const m = btn.dataset.matiere;
+      currentMatiere = m;
+      document.body.dataset.matiere = m;
+
+      document.querySelectorAll('.matiere-btn').forEach(b => b.classList.toggle('active', b.dataset.matiere === m));
+      document.querySelectorAll('.matiere-content').forEach(c => c.classList.toggle('active', c.dataset.matiere === m));
+
+      // Choisir la 1ère semaine de la matière
+      currentSemaine = SEMAINES[m][0].id;
+      renderSemaines();
+      renderNav();
+      activateSemaine(currentSemaine);
+    });
+  });
+
+  // ============ RENDU DES BOUTONS SEMAINES ============
+  function renderSemaines() {
+    const row = document.getElementById('semaines-row');
+    // garder le label
+    const label = row.querySelector('.selector-label');
+    row.innerHTML = '';
+    row.appendChild(label);
+
+    const liste = SEMAINES[currentMatiere];
+    if (!liste || liste.length === 0) {
+      const span = document.createElement('span');
+      span.style.fontStyle = 'italic';
+      span.style.color = 'var(--ink-soft)';
+      span.textContent = 'Aucune semaine disponible';
+      row.appendChild(span);
+      return;
+    }
+
+    liste.forEach(sem => {
+      const btn = document.createElement('button');
+      btn.className = 'semaine-btn' + (sem.recent ? ' recent' : '') + (sem.id === currentSemaine ? ' active' : '');
+      btn.dataset.semaine = sem.id;
+      btn.textContent = sem.titre;
+      btn.addEventListener('click', () => {
+        currentSemaine = sem.id;
+        document.querySelectorAll('.semaine-btn').forEach(b => b.classList.toggle('active', b.dataset.semaine === sem.id));
+        activateSemaine(sem.id);
+      });
+      row.appendChild(btn);
+    });
+  }
+
+  function activateSemaine(id) {
+    document.querySelectorAll(`.matiere-content[data-matiere="${currentMatiere}"] .semaine-content`).forEach(c => {
+      c.classList.toggle('active', c.dataset.semaine === id);
+    });
+    // Re-render MathJax si dispo
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise();
+    }
+    // Scroll vers le haut du contenu
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ============ NAV INTERNE ============
+  function renderNav() {
+    const navInner = document.getElementById('section-nav-inner');
+    navInner.innerHTML = '';
+    NAV_SECTIONS[currentMatiere].forEach(s => {
+      const a = document.createElement('a');
+      a.href = '#' + s.id;
+      a.textContent = s.label;
+      navInner.appendChild(a);
+    });
+  }
+
+  // ============ TOGGLE ALL DETAILS ============
+  function toggleAll(sectionId) {
+    const activeSemaine = document.querySelector(`.matiere-content[data-matiere="${currentMatiere}"] .semaine-content.active`);
+    if (!activeSemaine) return;
+    const detailsList = activeSemaine.querySelectorAll(`#${sectionId} details`);
+    const allOpen = Array.from(detailsList).every(d => d.open);
+    detailsList.forEach(d => d.open = !allOpen);
+  }
+
+  // ============ INIT ============
+  renderSemaines();
+  renderNav();
+</script>
+
+</body>
+</html>
